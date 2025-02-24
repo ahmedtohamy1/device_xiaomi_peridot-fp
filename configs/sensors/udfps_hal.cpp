@@ -15,6 +15,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <utils/SystemClock.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+
+// For screen wake-up
+#define POWER_STATUS_PATH "/sys/class/power_supply/battery/status"
+#define BACKLIGHT_PATH "/sys/class/backlight/panel0-backlight/brightness"
 
 static const char *udfps_state_paths[] = {
         "/sys/devices/virtual/touch/tp_dev/fod_press_status",
@@ -45,6 +51,66 @@ struct udfps_context_t {
     sensors_poll_device_1_t device;
     int fd;
 };
+
+// Check if screen is on
+static bool isScreenOn() {
+    int fd = open(BACKLIGHT_PATH, O_RDONLY);
+    if (fd < 0) {
+        ALOGE("Failed to open backlight path: %d", -errno);
+        return false;
+    }
+
+    char buf[16];
+    int rc = read(fd, buf, sizeof(buf));
+    close(fd);
+
+    if (rc < 0) {
+        ALOGE("Failed to read backlight: %d", -errno);
+        return false;
+    }
+
+    int brightness = atoi(buf);
+    return brightness > 0;
+}
+
+// Wake up the screen
+static void wakeUpScreen() {
+    ALOGI("Attempting to wake up the screen");
+    
+    // Method 1: Send a key event to wake up the screen
+    int fd = open("/dev/input/event0", O_WRONLY);
+    if (fd >= 0) {
+        // Simulate a key press to wake up the screen
+        // This is a simplified version, might need adjustment
+        struct input_event ev;
+        memset(&ev, 0, sizeof(ev));
+        ev.type = 1;  // EV_KEY
+        ev.code = 143;  // KEY_WAKEUP
+        ev.value = 1;  // Key press
+        write(fd, &ev, sizeof(ev));
+        
+        // Key release
+        ev.value = 0;
+        write(fd, &ev, sizeof(ev));
+        
+        close(fd);
+        ALOGI("Sent wakeup key event");
+    } else {
+        ALOGE("Failed to open input device: %d", -errno);
+    }
+    
+    // Method 2: Alternative approach using direct write to sysfs
+    fd = open("/sys/power/state", O_WRONLY);
+    if (fd >= 0) {
+        write(fd, "on", 2);
+        close(fd);
+        ALOGI("Wrote to /sys/power/state");
+    }
+    
+    // Method 3: Use power manager service via property
+    system("input keyevent KEYCODE_WAKEUP");
+    ALOGI("Executed input keyevent command");
+}
 
 static int udfps_read_line(int fd, char* buf, size_t len) {
     int rc;
@@ -155,6 +221,12 @@ static int udfps_poll(struct sensors_poll_device_t* dev, sensors_event_t* data, 
             fod_state = udfps_read_state(ctx->fd, fod_x, fod_y);
         }
     } while (!fod_state);
+
+    // If finger is detected and screen is off, wake up the screen
+    if (fod_state && !isScreenOn()) {
+        ALOGI("Finger detected while screen is off, waking up screen");
+        wakeUpScreen();
+    }
 
     memset(data, 0, sizeof(sensors_event_t));
     data->version = sizeof(sensors_event_t);
