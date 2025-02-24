@@ -81,7 +81,7 @@ Sensor::Sensor(int32_t sensorHandle, ISensorsEventCallback* callback)
       mCallback(callback),
       mMode(OperationMode::NORMAL) {
     mSensorInfo.sensorHandle = sensorHandle;
-    mSensorInfo.vendor = "The LineageOS Project";
+    mSensorInfo.vendor = "The Yet Another AOSP Project";
     mSensorInfo.version = 1;
     constexpr float kDefaultMaxDelayUs = 1000 * 1000;
     mSensorInfo.maxDelay = kDefaultMaxDelayUs;
@@ -233,7 +233,7 @@ UdfpsSensor::UdfpsSensor(int32_t sensorHandle, ISensorsEventCallback* callback)
     mSensorInfo.name = "UDFPS Sensor";
     mSensorInfo.type =
             static_cast<SensorType>(static_cast<int32_t>(SensorType::DEVICE_PRIVATE_BASE) + 1);
-    mSensorInfo.typeAsString = "org.lineageos.sensor.udfps";
+    mSensorInfo.typeAsString = "org.yaap.sensor.udfps";
     mSensorInfo.maxRange = 2048.0f;
     mSensorInfo.resolution = 1.0f;
     mSensorInfo.power = 0;

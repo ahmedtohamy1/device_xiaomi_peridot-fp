@@ -24,7 +24,7 @@ static const char *udfps_state_paths[] = {
 
 static struct sensor_t udfps_sensor = {
         .name = "UDFPS Sensor",
-        .vendor = "The LineageOS Project",
+        .vendor = "The Yet Another AOSP Project",
         .version = 1,
         .handle = 0,
         .type = SENSOR_TYPE_DEVICE_PRIVATE_BASE + 1,
@@ -34,7 +34,7 @@ static struct sensor_t udfps_sensor = {
         .minDelay = -1,
         .fifoReservedEventCount = 0,
         .fifoMaxEventCount = 0,
-        .stringType = "org.lineageos.sensor.udfps",
+        .stringType = "org.yaap.sensor.udfps",
         .requiredPermission = "",
         .maxDelay = 0,
         .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
