@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#define LOG_TAG "sensors.udfps"
+#define LOG_TAG "sensors.udfps.peridot"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -17,8 +17,8 @@
 #include <utils/SystemClock.h>
 
 static const char *udfps_state_paths[] = {
-        "/sys/devices/virtual/touch/tp_dev/fp_state",
-        "/sys/touchpanel/fp_state",
+        "/sys/devices/virtual/touch/tp_dev/fod_press_status",
+        "/sys/devices/virtual/touch/tp_dev/touch_finger_status",
         NULL,
 };
 
