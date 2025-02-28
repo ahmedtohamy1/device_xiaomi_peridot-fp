@@ -54,7 +54,7 @@ static bool isScreenOn() {
     }
 
     int brightness = atoi(buf);
-    bool screenOn = (brightness > 0); // or (brightness > 1), depending on your doze mode
+    bool screenOn = (brightness > 100); // or (brightness > 1), depending on your doze mode
     LOG(INFO) << "isScreenOn: brightness=" << brightness << ", returning " << (screenOn ? "true" : "false");
     return screenOn;
 }
