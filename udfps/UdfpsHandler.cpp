@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#define LOG_TAG "UdfpsHandler.zircon"
+#define LOG_TAG "UdfpsHandler.peridot"
 
 #include <aidl/android/hardware/biometrics/fingerprint/BnFingerprint.h>
 #include <android-base/logging.h>
@@ -88,7 +88,7 @@ static disp_event_resp* parseDispEvent(int fd) {
 
 }  // anonymous namespace
 
-class ZirconUdfpsHander : public UdfpsHandler {
+class PeridotUdfpsHander : public UdfpsHandler {
   public:
     void init(fingerprint_device_t* device) {
         mDevice = device;
@@ -221,7 +221,7 @@ class ZirconUdfpsHander : public UdfpsHandler {
 };
 
 static UdfpsHandler* create() {
-    return new ZirconUdfpsHander();
+    return new PeridotUdfpsHander();
 }
 
 static void destroy(UdfpsHandler* handler) {
